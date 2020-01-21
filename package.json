@@ -1,0 +1,21 @@
+{
+  "name": "bdl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "tokml": "^0.4.0"
+  },
+  "devDependencies": {
+    "togpx": "^0.5.4",
+    "toxml": "0.0.1"
+  },
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

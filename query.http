@@ -1,0 +1,8 @@
+GET /ArcGIS/rest/services/Mapa_turystyczna/MapServer/51/query?where=objectId>0&f=json HTTP/1.1
+Accept: text/html
+Accept-Encoding: none
+Host: mapserver.bdl.lasy.gov.pl
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.4 Safari/605.1.15
+Accept-Language: pl-pl
+Referer: https://www.bdl.lasy.gov.pl/portal/mapy
+Connection: keep-alive

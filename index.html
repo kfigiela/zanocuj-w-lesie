@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Bushcraft: Mapa obszarów pilotażowych</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .map-overlay {
+            font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            position: absolute;
+            /* width: 25%; */
+            top: 0;
+            left: 0;
+            padding: 10px;
+        }
+
+        .map-overlay .map-overlay-inner {
+            background-color: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .map-overlay h2 {
+            line-height: 24px;
+            display: block;
+            margin: 0 0 10px;
+        }
+
+        .map-overlay .legend .bar {
+            height: 10px;
+            width: 100%;
+            background: linear-gradient(to right, #fca107, #7f3121);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div class="map-overlay top">
+        <div class="map-overlay-inner">
+            <h2>Obszary pilotażowe bushcraftu i survivalu</h2>
+            <p><a href="https://www.lasy.gov.pl/pl/turystyka/pilotaz-bushcraft-i-survival" target="_blank">Informacje o
+                    programie</a> | <a href="https://github.com/kfigiela/bushcraft" target="_blank">Info</a></p>
+            <p>
+                Pobierz:
+                <a href="./data/51.json" target="_blank">GeoJSON</a> |
+                <a href="./data/51.gpx" target="_blank">GPX</a> |
+                <a href="./data/51.kmz" target="_blank">KMZ</a>
+            </p>
+        </div>
+    </div>
+    <script>
+        var bounds = [
+            [14.1146491, 48.9940062], // Southwest coordinates
+            [24.1687284, 54.9022727] // Northeast coordinates
+        ];
+
+        var maxBounds = [
+            [10.1146491, 45.9940062], // Southwest coordinates
+            [28.1687284, 57.9022727] // Northeast coordinates
+        ];
+
+        var map = new mapboxgl.Map({
+            container: 'map', // container id
+            style: 'opentopomap.json', // stylesheet location
+            // center: [22, 49.5], // starting position [lng, lat]
+            fitBounds: bounds,
+            maxBounds: maxBounds,
+            attributionControl: false
+            // zoom: 9 // starting zoom
+        });
+
+        // Add geolocate control to the map.
+        map.addControl(
+            new mapboxgl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true
+                },
+                trackUserLocation: true
+            })
+        );
+
+        map.addControl(new mapboxgl.NavigationControl());
+        map.addControl(new mapboxgl.ScaleControl());
+        map.addControl(new mapboxgl.FullscreenControl());
+        map.addControl(new mapboxgl.AttributionControl({
+            customAttribution: '<a href="https://www.bdl.lasy.gov.pl/">Bank Danych o Lasach</a>'
+        }));
+
+        map.on('load', function () {
+            var source = map.addSource('bushcraft', {
+                type: 'geojson',
+                data: 'data/51.json'
+            });
+            var layer = map.addLayer({
+                'id': 'bushcraft',
+                'type': 'fill',
+                'source': 'bushcraft',
+                'layout': {},
+                'paint': {
+                    'fill-color': 'rgba(255, 127, 0, 0.1)'
+                }
+            });
+            var layer2 = map.addLayer({
+                'id': 'bushcraft-line',
+                'type': 'line',
+                'source': 'bushcraft',
+                'layout': {},
+                'paint': {
+                    'line-color': 'rgba(255, 127, 0, 0.8)',
+                    'line-width': 2
+                }
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>
