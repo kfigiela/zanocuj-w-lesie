@@ -114,22 +114,24 @@
             // zoom: 9 // starting zoom
         });
 
-        // Add geolocate control to the map.
+
+
+        map.addControl(new mapboxgl.AttributionControl({
+            customAttribution: '<a href="https://www.bdl.lasy.gov.pl/">Bank Danych o Lasach</a>'
+        }));
+
         map.addControl(
             new mapboxgl.GeolocateControl({
                 positionOptions: {
                     enableHighAccuracy: true
                 },
                 trackUserLocation: true
-            })
+            }), 'bottom-right'
         );
 
-        map.addControl(new mapboxgl.NavigationControl());
-        map.addControl(new mapboxgl.ScaleControl());
-        map.addControl(new mapboxgl.FullscreenControl());
-        map.addControl(new mapboxgl.AttributionControl({
-            customAttribution: '<a href="https://www.bdl.lasy.gov.pl/">Bank Danych o Lasach</a>'
-        }));
+        map.addControl(new mapboxgl.FullscreenControl(), 'bottom-right');
+        map.addControl(new mapboxgl.ScaleControl(), 'bottom-left');
+        map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
         map.on('load', function () {
             var source = map.addSource('bushcraft', {
