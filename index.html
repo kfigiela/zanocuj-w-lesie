@@ -20,6 +20,7 @@
             bottom: 0;
             width: 100%;
         }
+
         @media (min-width: 600px) {
             .map-overlay {
                 font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
@@ -70,6 +71,7 @@
                 display: block;
                 margin: 0 0 0px;
             }
+
             p {
                 margin: .3em;
                 display: inline-block;
@@ -99,22 +101,37 @@
             [24.1687284, 54.9022727] // Northeast coordinates
         ];
 
-        var maxBounds = [
-            [10.1146491, 45.9940062], // Southwest coordinates
-            [28.1687284, 57.9022727] // Northeast coordinates
-        ];
-
         var map = new mapboxgl.Map({
-            container: 'map', // container id
-            style: 'opentopomap.json', // stylesheet location
-            // center: [22, 49.5], // starting position [lng, lat]
+            container: 'map',
+            // style: 'opentopomap.json', // stylesheet location
+            style: {
+                'version': 8,
+                'sources': {
+                    'raster-tiles': {
+                        'type': 'raster',
+                        'tiles': [
+                            'https://a.tile.opentopomap.org/{z}/{x}/{y}.png',
+                            'https://b.tile.opentopomap.org/{z}/{x}/{y}.png',
+                            'https://c.tile.opentopomap.org/{z}/{x}/{y}.png'
+                        ],
+                        'tileSize': 256,
+                        'attribution':
+                            'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+                    }
+                },
+                'layers': [
+                    {
+                        'id': 'simple-tiles',
+                        'type': 'raster',
+                        'source': 'raster-tiles',
+                        'minzoom': 0,
+                        'maxzoom': 22
+                    }
+                ]
+            },
             bounds: bounds,
-            // maxBounds: maxBounds,
             attributionControl: false
-            // zoom: 9 // starting zoom
         });
-
-
 
         map.addControl(new mapboxgl.AttributionControl({
             customAttribution: '<a href="https://www.bdl.lasy.gov.pl/">Bank Danych o Lasach</a>'
