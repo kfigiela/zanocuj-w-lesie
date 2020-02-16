@@ -105,32 +105,32 @@
 
         var mapOpts = {
             container: 'map',
-            style: 'opentopomap.json', // stylesheet location
-            // style: {
-            //     'version': 8,
-            //     'sources': {
-            //         'raster-tiles': {
-            //             'type': 'raster',
-            //             'tiles': [
-            //                 'https://a.tile.opentopomap.org/{z}/{x}/{y}.png',
-            //                 'https://b.tile.opentopomap.org/{z}/{x}/{y}.png',
-            //                 'https://c.tile.opentopomap.org/{z}/{x}/{y}.png'
-            //             ],
-            //             'tileSize': 256,
-            //             'attribution':
-            //                 'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-            //         }
-            //     },
-            //     'layers': [
-            //         {
-            //             'id': 'simple-tiles',
-            //             'type': 'raster',
-            //             'source': 'raster-tiles',
-            //             'minzoom': 0,
-            //             'maxzoom': 22
-            //         }
-            //     ]
-            // },
+            // style: 'opentopomap.json', // stylesheet location
+            style: {
+                'version': 8,
+                'sources': {
+                    'raster-tiles': {
+                        'type': 'raster',
+                        'tiles': [
+                            'https://a.tile.opentopomap.org/{z}/{x}/{y}.png',
+                            'https://b.tile.opentopomap.org/{z}/{x}/{y}.png',
+                            'https://c.tile.opentopomap.org/{z}/{x}/{y}.png'
+                        ],
+                        'tileSize': 256,
+                        'attribution':
+                            'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+                    }
+                },
+                'layers': [
+                    {
+                        'id': 'simple-tiles',
+                        'type': 'raster',
+                        'source': 'raster-tiles',
+                        'minzoom': 0,
+                        'maxzoom': 22
+                    }
+                ]
+            },
             attributionControl: false
         };
 
