@@ -3,7 +3,7 @@
 set -e
 
 curl --request GET \
-  --url 'http://mapserver.bdl.lasy.gov.pl/ArcGIS/rest/services/Mapa_turystyczna/MapServer/51/query?where=objectId%3E0&f=json' \
+  --url 'http://mapserver.bdl.lasy.gov.pl/ArcGIS/rest/services/Mapa_turystyczna/MapServer/51/query?where=objectId%3E0&f=geojson' \
   -o data/bushcraft.json \
   --header 'accept: text/html' \
   --header 'accept-language: pl-pl' \
@@ -24,4 +24,4 @@ curl --request GET \
   --header 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.4 Safari/605.1.15' \
   --compressed
 
-togpx data/bushcraft.json > data/bushcraft.gpx
+node_modules/.bin/togpx data/bushcraft.json > data/bushcraft.gpx
