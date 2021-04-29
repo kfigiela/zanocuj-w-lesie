@@ -12,7 +12,8 @@
     "mapbox-gl": "^2.2.0",
     "mapbox-gl-controls": "^2.0.0",
     "rollup": "^2.46.0",
-    "rollup-plugin-terser": "^7.0.2"
+    "rollup-plugin-terser": "^7.0.2",
+    "tokml": "^0.4.0"
   },
   "devDependencies": {
     "togpx": "^0.5.4",
