@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Bushcraft: Mapa obszarów pilotażowych</title>
+    <title>Zanocuj w Lesie: mapa obszarów</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <meta name="mobile-web-app-capable" content="yes">
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.js"></script>
@@ -84,19 +84,15 @@
     <div id="map"></div>
     <div class="map-overlay top">
         <div class="map-overlay-inner">
-            <h2>Obszary pilotażowe bushcraftu i survivalu</h2>
-            <p><a href="https://www.lasy.gov.pl/pl/turystyka/pilotaz-bushcraft-i-survival" target="_blank">Informacje o
-                    programie</a> | <a href="https://github.com/kfigiela/bushcraft" target="_blank">Info</a></p>
-            <p>
-                Pobierz:
-                <a href="./data/bushcraft.json" target="_blank">GeoJSON</a> |
-                <a href="./data/bushcraft.gpx" target="_blank">GPX</a> |
-                <a href="./data/bushcraft.kmz" target="_blank">KMZ</a> |
-                <a href="./data/bushcraft.zip" target="_blank">IMG (Garmin)</a>
-            </p>
+            <h2>Zanocuj w Lesie</h2>
+            <p><a href="https://www.lasy.gov.pl/pl/turystyka/program-zanocuj-w-lesie" target="_blank">Informacje o
+                    programie</a> | <a href="https://github.com/kfigiela/bushcraft" target="_blank">Info</a> |
+                Aktualizacja 29.04.2021</p>
+            <p> Oficjalna mapa: <a href="https://www.bdl.lasy.gov.pl" target="_blank">BDL</a> </p>
         </div>
     </div>
     <script>
+        var version = "zanocujwlesie-20210429";
         var bounds = [
             [14.1146491, 48.9940062], // Southwest coordinates
             [24.1687284, 54.9022727] // Northeast coordinates
@@ -105,7 +101,6 @@
 
         var mapOpts = {
             container: 'map',
-            // style: 'opentopomap.json', // stylesheet location
             style: {
                 'version': 8,
                 'sources': {
@@ -131,9 +126,10 @@
                     },
                     'bushcraft': {
                         type: 'vector',
-                        // tiles: ['http://localhost:3000/file-geojson/bushcraft/VectorTileServer/{z}/{x}/{y}.pbf'],
-                        tiles: ['https://hpumzsu502.execute-api.eu-central-1.amazonaws.com/dev/file-geojson/bushcraft3/VectorTileServer/{z}/{x}/{y}.pbf'],
+                        tiles: ['https://d18e1t1gwitcxb.cloudfront.net/' + version + '/VectorTileServer/{z}/{x}/{y}.pbf'],
                         attribution: '<a href="https://www.bdl.lasy.gov.pl/">Bank Danych o Lasach</a>',
+                        'minzoom': 0,
+                        'maxzoom': 14
                     }
                 },
                 'layers': [
@@ -148,12 +144,25 @@
                         'id': 'bushcraft',
                         'type': 'fill',
                         'source': 'bushcraft',
-                        'source-layer': 'bushcraft3',
+                        'source-layer': version,
                         'layout': {},
                         'paint': {
-                            'fill-color': 'rgba(53, 109, 175, 0.6)',
+                            'fill-color': 'rgba(0, 0, 128, 0.1)'
                         },
-                        'minzoom': 4,
+                        'minzoom': 0,
+                        'maxzoom': 24
+                    },
+                    {
+                        'id': 'bushcraft-line',
+                        'type': 'line',
+                        'source': 'bushcraft',
+                        'source-layer': version,
+                        'layout': {},
+                        'paint': {
+                            'line-color': 'rgba(0, 0, 128, 0.8)',
+                            'line-width': 2
+                        },
+                        'minzoom': 0,
                         'maxzoom': 24
                     }
                 ]
@@ -190,32 +199,6 @@
 
         map.addControl(new mapboxgl.ScaleControl(), 'bottom-left');
         map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
-
-        // map.on('load', function () {
-        //     var source = map.addSource('bushcraft', {
-        //         type: 'geojson',
-        //         data: 'data/bushcraft.json'
-        //     });
-        //     var layer = map.addLayer({
-        //         'id': 'bushcraft',
-        //         'type': 'fill',
-        //         'source': 'bushcraft',
-        //         'layout': {},
-        //         'paint': {
-        //             'fill-color': 'rgba(255, 127, 0, 0.1)'
-        //         }
-        //     });
-        //     var layer2 = map.addLayer({
-        //         'id': 'bushcraft-line',
-        //         'type': 'line',
-        //         'source': 'bushcraft',
-        //         'layout': {},
-        //         'paint': {
-        //             'line-color': 'rgba(255, 127, 0, 0.8)',
-        //             'line-width': 2
-        //         }
-        //     });
-        // });
 
         function updateHash() {
             var c = map.getCenter();
