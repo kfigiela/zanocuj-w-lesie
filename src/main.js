@@ -1,6 +1,5 @@
 import mapboxgl from 'mapbox-gl';
 import { RulerControl } from 'mapbox-gl-controls';
-import { InspectControl } from 'mapbox-gl-controls';
 import { StylesControl } from 'mapbox-gl-controls';
 
 
@@ -15,14 +14,14 @@ const style = (useLayer) => {
         'version': 8,
         "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
         'sources': {
-            'mapycz': {
+            'mapycz-turist': {
                 'type': 'raster',
                 'tiles': [
-                    'https://mapserver.mapy.cz/turist-m/{z}-{x}-{y}'
+                    'https://mapserver.mapy.cz/turist-m/retina/{z}-{x}-{y}'
                 ],
                 'tileSize': 256,
                 'attribution':
-                    'map data: © Seznam.cz, a.s., © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    '© Seznam.cz, a.s., © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             },
             'opentopo': {
                 'type': 'raster',
@@ -33,12 +32,12 @@ const style = (useLayer) => {
                 ],
                 'tileSize': 256,
                 'attribution':
-                    'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+                    '© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a>, <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
             },
             'bushcraft': {
-                type: 'vector',
-                tiles: ['https://d18e1t1gwitcxb.cloudfront.net/' + version + '/VectorTileServer/{z}/{x}/{y}.pbf'],
-                attribution: '<a href="https://www.bdl.lasy.gov.pl/">Bank Danych o Lasach</a>',
+                'type': 'vector',
+                'tiles': [`https://d18e1t1gwitcxb.cloudfront.net/${version}/VectorTileServer/{z}/{x}/{y}.pbf`],
+                'attribution': '<a href="https://www.bdl.lasy.gov.pl/">Bank Danych o Lasach</a>',
                 'minzoom': 0,
                 'maxzoom': 14
             }
@@ -48,8 +47,8 @@ const style = (useLayer) => {
                 'id': 'simple-tiles',
                 'type': 'raster',
                 'source': useLayer,
-                'minzoom': 0,
-                'maxzoom': 20
+                'minzoom': 2,
+                'maxzoom': 18
             },
             {
                 'id': 'bushcraft',
@@ -60,8 +59,8 @@ const style = (useLayer) => {
                 'paint': {
                     'fill-color': 'rgba(0, 0, 128, 0.1)'
                 },
-                'minzoom': 0,
-                'maxzoom': 24
+                'minzoom': 2,
+                'maxzoom': 18
             },
             {
                 'id': 'bushcraft-line',
@@ -70,57 +69,49 @@ const style = (useLayer) => {
                 'source-layer': version,
                 'layout': {},
                 'paint': {
-                    'line-color': 'rgba(0, 0, 128, 0.8)',
+
+                    'line-color':
+                    [
+                        'match',
+                        ['get','kuchenka'],
+                        'TAK',
+                        'rgba(128, 0, 128, 0.8)',
+                        // else
+                        'rgba(0, 0, 128, 0.8)'
+                        ],
                     'line-width': 2
                 },
-                'minzoom': 0,
-                'maxzoom': 24
+                'minZoom': 2,
+                'maxZoom': 18
             }
         ]
     };
 };
 
-
-var mapOpts = {
+mapboxgl.accessToken = "pk.eyJ1Ijoia2ZpZ2llbGEiLCJhIjoiY2pucHZ0ZXN6MDJubTNrczQ2NXhxa21kaiJ9.dhBjkVRz_TUpsDZMN93wkQ";
+var map = new mapboxgl.Map({
     container: 'map',
-    style: style("mapycz"),
-    attributionControl: false
-};
+    style: style("mapycz-turist"),
+    attributionControl: true,
+    minZoom: 2,
+    maxZoom: 17,
+    bounds: bounds,
+    maxPitch: 0
+});
 
-var parsedHash = location.hash.match(/#(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)/);
-
-if (parsedHash !== null) {
-    var lat = parseFloat(parsedHash[1]);
-    var lng = parseFloat(parsedHash[2]);
-    var zoom = parseFloat(parsedHash[3]);
-    mapOpts.center = [lng, lat];
-    mapOpts.zoom = zoom;
-} else {
-    mapOpts.bounds = bounds;
-}
-
-function updateHash() {
+const updateHash = () => {
     var c = map.getCenter();
     history.replaceState({}, window.title, "#" + c.lat.toFixed(6) + "/" + c.lng.toFixed(6) + "/" + map.getZoom().toFixed(2));
 }
-
-
-mapboxgl.accessToken = "pk.eyJ1Ijoia2ZpZ2llbGEiLCJhIjoiY2pucHZ0ZXN6MDJubTNrczQ2NXhxa21kaiJ9.dhBjkVRz_TUpsDZMN93wkQ";
-var map = new mapboxgl.Map(mapOpts);
 map.on('dragend', updateHash);
 map.on('zoomend', updateHash);
-
-
-map.addControl(new mapboxgl.AttributionControl({
-    customAttribution: '<a href="https://www.bdl.lasy.gov.pl/">Bank Danych o Lasach</a>'
-}));
 
 map.addControl(new StylesControl({
     styles: [
         {
             label: 'Mapy.cz',
             styleName: 'Mapy.cz',
-            styleUrl: style('mapycz')
+            styleUrl: style('mapycz-turist')
         }, {
             label: 'OpenTopoMap',
             styleName: 'OpenTopoMap',
@@ -141,4 +132,39 @@ map.addControl(
 map.addControl(new mapboxgl.ScaleControl(), 'bottom-left');
 map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 map.addControl(new RulerControl(), 'bottom-right');
-map.addControl(new InspectControl() , 'bottom-right');
+
+map.on('click', 'bushcraft', (e) => {
+    const coordinates = e.lngLat;
+    const props = e.features[0].properties;
+    const description = `Nadleśnictwo <b>${props.nadl}</b><br>Leśnictwo <b>${props.les}</b><br>Kuchenka <b>${props.kuchenka}</b>`;
+    new mapboxgl.Popup()
+    .setLngLat(coordinates)
+    .setHTML(description)
+    .addTo(map);
+});
+
+// Change the cursor to a pointer when the mouse is over the places layer.
+map.on('mouseenter', 'bushcraft', function () {
+    map.getCanvas().style.cursor = 'pointer';
+});
+
+// Change it back to a pointer when it leaves.
+map.on('mouseleave', 'bushcraft', function () {
+    map.getCanvas().style.cursor = '';
+});
+
+
+const hashChanged = () => {
+    const parsedHash = location.hash.match(/#(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)/);
+
+    if (parsedHash !== null) {
+        const lat = parseFloat(parsedHash[1]);
+        const lng = parseFloat(parsedHash[2]);
+        const zoom = parseFloat(parsedHash[3]);
+        map.jumpTo({center: [lng, lat], zoom});
+        console.log(`Hash changed ${lat} ${lng} ${zoom}`);
+    }
+}
+
+window.addEventListener("hashchange", hashChanged, false);
+hashChanged();

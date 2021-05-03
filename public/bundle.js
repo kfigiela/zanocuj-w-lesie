@@ -111,213 +111,11 @@
 	    }
 	}
 
-	const svg$3 = `
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#505050">
-    <path d="M14 7l-5 5 5 5V7z"/>
-    <path fill="none" d="M24 0v24H0V0h24z"/>
-</svg>
-`;
-	function iconLeft () {
-	    return (new DOMParser().parseFromString(svg$3, 'image/svg+xml')).firstChild;
-	}
-
-	const svg$2 = `
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#505050">
-    <path d="M10 17l5-5-5-5v10z"/>
-    <path fill="none" d="M0 24V0h24v24H0z"/>
-</svg>
-`;
-	function iconRight () {
-	    return (new DOMParser().parseFromString(svg$2, 'image/svg+xml')).firstChild;
-	}
-
 	var Direction;
 	(function (Direction) {
 	    Direction["Next"] = "next";
 	    Direction["Prev"] = "prev";
 	})(Direction || (Direction = {}));
-	function getData(feature) {
-	    const props = feature.properties;
-	    const data = [
-	        { key: '$id', value: feature.layer.id },
-	        { key: '$type', value: feature.layer.type },
-	        { key: 'source', value: feature.layer.source },
-	        { key: 'source-layer', value: feature.layer['source-layer'] },
-	    ];
-	    Object.keys(props).forEach((key) => {
-	        data.push({ key, value: props[key] });
-	    });
-	    return data;
-	}
-	function popupTemplate(features) {
-	    let current = 0;
-	    const root = document.createElement('div');
-	    root.classList.add('mapbox-control-inspect-popup');
-	    const content = document.createElement('div');
-	    content.classList.add('mapbox-control-inspect-content');
-	    const templatePrev = () => {
-	        const button = document.createElement('div');
-	        button.setAttribute('type', 'button');
-	        button.classList.add('mapbox-control-inspect-prev');
-	        button.appendChild(iconLeft());
-	        button.addEventListener('click', () => goTo(Direction.Prev));
-	        return button;
-	    };
-	    const templateNext = () => {
-	        const button = document.createElement('div');
-	        button.setAttribute('type', 'button');
-	        button.classList.add('mapbox-control-inspect-next');
-	        button.appendChild((iconRight()));
-	        button.addEventListener('click', () => goTo(Direction.Next));
-	        return button;
-	    };
-	    const templateTitle = () => {
-	        const title = document.createElement('div');
-	        title.classList.add('mapbox-control-inspect-current');
-	        title.textContent = `${current + 1} / ${features.length}`;
-	        return title;
-	    };
-	    const templateHeader = () => {
-	        const header = document.createElement('div');
-	        header.classList.add('mapbox-control-inspect-header');
-	        header.appendChild(templatePrev());
-	        header.appendChild(templateTitle());
-	        header.appendChild(templateNext());
-	        return header;
-	    };
-	    const templateFeature = (feature) => {
-	        const table = document.createElement('table');
-	        table.classList.add('mapbox-control-inspect-feature');
-	        const data = getData(feature);
-	        data.forEach((prop) => {
-	            const row = document.createElement('tr');
-	            const key = document.createElement('th');
-	            const value = document.createElement('td');
-	            key.textContent = prop.key;
-	            value.textContent = String(prop.value);
-	            row.appendChild(key);
-	            row.appendChild(value);
-	            table.append(row);
-	        });
-	        return table;
-	    };
-	    function goTo(dir) {
-	        if (dir === Direction.Prev) {
-	            current = current !== 0 ? current - 1 : features.length - 1;
-	        }
-	        else if (dir === Direction.Next) {
-	            current = current !== features.length - 1 ? current + 1 : 0;
-	        }
-	        content.innerHTML = '';
-	        content.appendChild(templateHeader());
-	        content.appendChild(templateFeature(features[current]));
-	    }
-	    root.appendChild(content);
-	    if (!features.length) {
-	        content.textContent = 'No features';
-	    }
-	    else {
-	        if (features.length > 1) {
-	            content.appendChild(templateHeader());
-	        }
-	        content.appendChild(templateFeature(features[current]));
-	    }
-	    return root;
-	}
-
-	const svg$1 = `
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#505050">
-    <path d="M0 0h24v24H0z" fill="none"/>
-    <path d="M20 19.59V8l-6-6H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c.45 0 .85-.15 1.19-.4l-4.43-4.43c-.8.52-1.74.83-2.76.83-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5c0 1.02-.31 1.96-.83 2.75L20 19.59zM9 13c0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3-3 1.34-3 3z"/>
-</svg>
-`;
-	function iconInspect () {
-	    return (new DOMParser().parseFromString(svg$1, 'image/svg+xml')).firstChild;
-	}
-
-	/**
-	 * Inspect control to debug style layers and source
-	 */
-	class InspectControl extends Base {
-	    constructor() {
-	        super();
-	        this.popupNode = null;
-	        this.lngLat = null;
-	        this.isInspecting = false;
-	        this.button = new Button();
-	    }
-	    insert() {
-	        this.addClassName('mapbox-control-inspect');
-	        this.button.setIcon(iconInspect());
-	        this.button.onClick(() => {
-	            if (this.isInspecting) {
-	                this.inspectingOff();
-	            }
-	            else {
-	                this.inspectingOn();
-	            }
-	        });
-	        this.addButton(this.button);
-	        this.mapClickListener = this.mapClickListener.bind(this);
-	        this.updatePosition = this.updatePosition.bind(this);
-	    }
-	    inspectingOn() {
-	        this.isInspecting = true;
-	        this.button.addClassName('-active');
-	        this.map.on('click', this.mapClickListener);
-	        this.map.on('move', this.updatePosition);
-	        this.map.getCanvas().style.cursor = 'pointer';
-	    }
-	    inspectingOff() {
-	        this.isInspecting = false;
-	        this.button.removeClassName('-active');
-	        this.map.off('click', this.mapClickListener);
-	        this.map.off('move', this.updatePosition);
-	        this.map.getCanvas().style.cursor = '';
-	        this.removePopup();
-	    }
-	    getFeatures(event) {
-	        const selectThreshold = 3;
-	        const queryBox = [
-	            [event.point.x - selectThreshold, event.point.y + selectThreshold],
-	            [event.point.x + selectThreshold, event.point.y - selectThreshold], // top right (NE)
-	        ];
-	        return this.map.queryRenderedFeatures(queryBox);
-	    }
-	    addPopup(features) {
-	        this.popupNode = popupTemplate(features);
-	        this.mapContainer.appendChild(this.popupNode);
-	        this.updatePosition();
-	    }
-	    removePopup() {
-	        if (!this.popupNode)
-	            return;
-	        this.mapContainer.removeChild(this.popupNode);
-	        this.popupNode = null;
-	    }
-	    updatePosition() {
-	        if (!this.lngLat)
-	            return;
-	        const canvasRect = this.mapCanvas.getBoundingClientRect();
-	        const pos = this.map.project(this.lngLat);
-	        this.popupNode.style.left = `${pos.x - canvasRect.left}px`;
-	        this.popupNode.style.top = `${pos.y - canvasRect.top}px`;
-	    }
-	    mapClickListener(event) {
-	        this.lngLat = event.lngLat;
-	        const features = this.getFeatures(event);
-	        this.removePopup();
-	        this.addPopup(features);
-	    }
-	    onAddControl() {
-	        this.mapContainer = this.map.getContainer();
-	        this.mapCanvas = this.map.getCanvas();
-	        this.insert();
-	    }
-	    onRemoveControl() {
-	        this.inspectingOff();
-	    }
-	}
 
 	/**
 	 * @module helpers
@@ -723,14 +521,14 @@
 	        'version': 8,
 	        "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
 	        'sources': {
-	            'mapycz': {
+	            'mapycz-turist': {
 	                'type': 'raster',
 	                'tiles': [
-	                    'https://mapserver.mapy.cz/turist-m/{z}-{x}-{y}'
+	                    'https://mapserver.mapy.cz/turist-m/retina/{z}-{x}-{y}'
 	                ],
 	                'tileSize': 256,
 	                'attribution':
-	                    'map data: © Seznam.cz, a.s., © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+	                    '© Seznam.cz, a.s., © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 	            },
 	            'opentopo': {
 	                'type': 'raster',
@@ -741,12 +539,12 @@
 	                ],
 	                'tileSize': 256,
 	                'attribution':
-	                    'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+	                    '© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a>, <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 	            },
 	            'bushcraft': {
-	                type: 'vector',
-	                tiles: ['https://d18e1t1gwitcxb.cloudfront.net/' + version + '/VectorTileServer/{z}/{x}/{y}.pbf'],
-	                attribution: '<a href="https://www.bdl.lasy.gov.pl/">Bank Danych o Lasach</a>',
+	                'type': 'vector',
+	                'tiles': [`https://d18e1t1gwitcxb.cloudfront.net/${version}/VectorTileServer/{z}/{x}/{y}.pbf`],
+	                'attribution': '<a href="https://www.bdl.lasy.gov.pl/">Bank Danych o Lasach</a>',
 	                'minzoom': 0,
 	                'maxzoom': 14
 	            }
@@ -756,8 +554,8 @@
 	                'id': 'simple-tiles',
 	                'type': 'raster',
 	                'source': useLayer,
-	                'minzoom': 0,
-	                'maxzoom': 20
+	                'minzoom': 2,
+	                'maxzoom': 18
 	            },
 	            {
 	                'id': 'bushcraft',
@@ -768,8 +566,8 @@
 	                'paint': {
 	                    'fill-color': 'rgba(0, 0, 128, 0.1)'
 	                },
-	                'minzoom': 0,
-	                'maxzoom': 24
+	                'minzoom': 2,
+	                'maxzoom': 18
 	            },
 	            {
 	                'id': 'bushcraft-line',
@@ -778,57 +576,49 @@
 	                'source-layer': version,
 	                'layout': {},
 	                'paint': {
-	                    'line-color': 'rgba(0, 0, 128, 0.8)',
+
+	                    'line-color':
+	                    [
+	                        'match',
+	                        ['get','kuchenka'],
+	                        'TAK',
+	                        'rgba(128, 0, 128, 0.8)',
+	                        // else
+	                        'rgba(0, 0, 128, 0.8)'
+	                        ],
 	                    'line-width': 2
 	                },
-	                'minzoom': 0,
-	                'maxzoom': 24
+	                'minZoom': 2,
+	                'maxZoom': 18
 	            }
 	        ]
 	    };
 	};
 
-
-	var mapOpts = {
+	mapboxGl.accessToken = "pk.eyJ1Ijoia2ZpZ2llbGEiLCJhIjoiY2pucHZ0ZXN6MDJubTNrczQ2NXhxa21kaiJ9.dhBjkVRz_TUpsDZMN93wkQ";
+	var map = new mapboxGl.Map({
 	    container: 'map',
-	    style: style("mapycz"),
-	    attributionControl: false
-	};
+	    style: style("mapycz-turist"),
+	    attributionControl: true,
+	    minZoom: 2,
+	    maxZoom: 17,
+	    bounds: bounds,
+	    maxPitch: 0
+	});
 
-	var parsedHash = location.hash.match(/#(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)/);
-
-	if (parsedHash !== null) {
-	    var lat = parseFloat(parsedHash[1]);
-	    var lng = parseFloat(parsedHash[2]);
-	    var zoom = parseFloat(parsedHash[3]);
-	    mapOpts.center = [lng, lat];
-	    mapOpts.zoom = zoom;
-	} else {
-	    mapOpts.bounds = bounds;
-	}
-
-	function updateHash() {
+	const updateHash = () => {
 	    var c = map.getCenter();
 	    history.replaceState({}, window.title, "#" + c.lat.toFixed(6) + "/" + c.lng.toFixed(6) + "/" + map.getZoom().toFixed(2));
-	}
-
-
-	mapboxGl.accessToken = "pk.eyJ1Ijoia2ZpZ2llbGEiLCJhIjoiY2pucHZ0ZXN6MDJubTNrczQ2NXhxa21kaiJ9.dhBjkVRz_TUpsDZMN93wkQ";
-	var map = new mapboxGl.Map(mapOpts);
+	};
 	map.on('dragend', updateHash);
 	map.on('zoomend', updateHash);
-
-
-	map.addControl(new mapboxGl.AttributionControl({
-	    customAttribution: '<a href="https://www.bdl.lasy.gov.pl/">Bank Danych o Lasach</a>'
-	}));
 
 	map.addControl(new StylesControl({
 	    styles: [
 	        {
 	            label: 'Mapy.cz',
 	            styleName: 'Mapy.cz',
-	            styleUrl: style('mapycz')
+	            styleUrl: style('mapycz-turist')
 	        }, {
 	            label: 'OpenTopoMap',
 	            styleName: 'OpenTopoMap',
@@ -849,7 +639,42 @@
 	map.addControl(new mapboxGl.ScaleControl(), 'bottom-left');
 	map.addControl(new mapboxGl.NavigationControl(), 'bottom-right');
 	map.addControl(new RulerControl(), 'bottom-right');
-	map.addControl(new InspectControl() , 'bottom-right');
+
+	map.on('click', 'bushcraft', (e) => {
+	    const coordinates = e.lngLat;
+	    const props = e.features[0].properties;
+	    const description = `Nadleśnictwo <b>${props.nadl}</b><br>Leśnictwo <b>${props.les}</b><br>Kuchenka <b>${props.kuchenka}</b>`;
+	    new mapboxGl.Popup()
+	    .setLngLat(coordinates)
+	    .setHTML(description)
+	    .addTo(map);
+	});
+
+	// Change the cursor to a pointer when the mouse is over the places layer.
+	map.on('mouseenter', 'bushcraft', function () {
+	    map.getCanvas().style.cursor = 'pointer';
+	});
+
+	// Change it back to a pointer when it leaves.
+	map.on('mouseleave', 'bushcraft', function () {
+	    map.getCanvas().style.cursor = '';
+	});
+
+
+	const hashChanged = () => {
+	    const parsedHash = location.hash.match(/#(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)/);
+
+	    if (parsedHash !== null) {
+	        const lat = parseFloat(parsedHash[1]);
+	        const lng = parseFloat(parsedHash[2]);
+	        const zoom = parseFloat(parsedHash[3]);
+	        map.jumpTo({center: [lng, lat], zoom});
+	        console.log(`Hash changed ${lat} ${lng} ${zoom}`);
+	    }
+	};
+
+	window.addEventListener("hashchange", hashChanged, false);
+	hashChanged();
 
 }());
 //# sourceMappingURL=bundle.js.map
