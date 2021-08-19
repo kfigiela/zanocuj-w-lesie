@@ -3,7 +3,7 @@ import { RulerControl } from 'mapbox-gl-controls';
 import { StylesControl } from 'mapbox-gl-controls';
 
 
-var version = "zanocujwlesie-20210429-2";
+var version = "zanocujwlesie-20210820";
 var bounds = [
     [14.1146491, 48.9940062], // Southwest coordinates
     [24.1687284, 54.9022727] // Northeast coordinates
