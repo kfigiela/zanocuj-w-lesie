@@ -70,15 +70,7 @@ const style = (useLayer) => {
                 'layout': {},
                 'paint': {
 
-                    'line-color':
-                    [
-                        'match',
-                        ['get','kuchenka'],
-                        'TAK',
-                        'rgba(128, 0, 128, 0.8)',
-                        // else
-                        'rgba(0, 0, 128, 0.8)'
-                        ],
+                    'line-color': 'rgba(0, 0, 128, 0.8)',
                     'line-width': 2
                 },
                 'minZoom': 2,
@@ -136,7 +128,7 @@ map.addControl(new RulerControl(), 'bottom-right');
 map.on('click', 'bushcraft', (e) => {
     const coordinates = e.lngLat;
     const props = e.features[0].properties;
-    const description = `Nadleśnictwo <b>${props.nadl}</b><br>Leśnictwo <b>${props.les}</b><br>Kuchenka <b>${props.kuchenka}</b>`;
+    const description = `Nadleśnictwo <b>${props.nadl}</b><br>Leśnictwo <b>${props.les}</b>`;
     new mapboxgl.Popup()
     .setLngLat(coordinates)
     .setHTML(description)
