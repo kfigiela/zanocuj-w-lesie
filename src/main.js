@@ -14,15 +14,6 @@ const style = (useLayer) => {
         'version': 8,
         "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
         'sources': {
-            'mapycz-turist': {
-                'type': 'raster',
-                'tiles': [
-                    'https://mapserver.mapy.cz/turist-m/retina/{z}-{x}-{y}'
-                ],
-                'tileSize': 256,
-                'attribution':
-                    '© Seznam.cz, a.s., © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            },
             'opentopo': {
                 'type': 'raster',
                 'tiles': [
@@ -101,10 +92,6 @@ map.on('zoomend', updateHash);
 map.addControl(new StylesControl({
     styles: [
         {
-            label: 'Mapy.cz',
-            styleName: 'Mapy.cz',
-            styleUrl: style('mapycz-turist')
-        }, {
             label: 'OpenTopoMap',
             styleName: 'OpenTopoMap',
             styleUrl: style('opentopo')
