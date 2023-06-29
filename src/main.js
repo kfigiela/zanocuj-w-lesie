@@ -96,6 +96,16 @@ map.addControl(new StylesControl({
             styleName: 'OpenTopoMap',
             styleUrl: style('opentopo')
         },
+        // {
+        //     label: 'MapBox Satellite',
+        //     styleName: 'MapBox Satellite',
+        //     styleUrl: 'mapbox://styles/mapbox/satellite-streets-v12'
+        // },
+        // {
+        //     label: 'MapBox Satellite',
+        //     styleName: 'MapBox Satellite',
+        //     styleUrl: 'mapbox://styles/mapbox/outdoors-v12'
+        // },
     ]
 }), 'bottom-right');
 
