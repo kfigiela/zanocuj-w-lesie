@@ -74,7 +74,7 @@ const style = (useLayer) => {
 mapboxgl.accessToken = "pk.eyJ1Ijoia2ZpZ2llbGEiLCJhIjoiY2pucHZ0ZXN6MDJubTNrczQ2NXhxa21kaiJ9.dhBjkVRz_TUpsDZMN93wkQ";
 var map = new mapboxgl.Map({
     container: 'map',
-    style: style("mapycz-turist"),
+    style: style("opentopo"),
     attributionControl: true,
     minZoom: 2,
     maxZoom: 17,
@@ -91,7 +91,7 @@ map.on('zoomend', updateHash);
 
 map.addControl(new StylesControl({
     styles: [
-        {
+         {
             label: 'OpenTopoMap',
             styleName: 'OpenTopoMap',
             styleUrl: style('opentopo')
